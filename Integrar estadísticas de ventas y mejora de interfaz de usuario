@@ -1,0 +1,80 @@
+import os
+
+# --- CONFIGURACIÓN ---
+ARCHIVO_VENTAS = "ventas.txt"
+SECTORES = {
+    'A': {'precio': 5000, 'capacidad_max': 10},
+    'B': {'precio': 3000, 'capacidad_max': 20},
+    'C': {'precio': 1500, 'capacidad_max': 30}
+}
+
+# --- FUNCIONES ---
+
+def calcular_descuento(total, cantidad):
+    """Aplica descuento del 10% si la compra es mayor a 5 entradas."""
+    if cantidad > 5:
+        return total * 0.90
+    return total
+
+def obtener_ventas_actuales():
+    """Calcula cuántas entradas se han vendido por sector."""
+    ventas = {'A': 0, 'B': 0, 'C': 0}
+    if os.path.exists(ARCHIVO_VENTAS):
+        with open(ARCHIVO_VENTAS, 'r') as f:
+            for linea in f:
+                datos = linea.strip().split(',')
+                if len(datos) >= 2:
+                    ventas[datos[0]] += int(datos[1])
+    return ventas
+
+def registrar_venta():
+    """Gestiona el flujo de venta y muestra precios al usuario."""
+    print("\n--- Registro de Venta ---")
+    print("Precios: A($5000), B($3000), C($1500)")
+    sector = input("Ingrese sector (A/B/C): ").upper()
+    
+    if sector not in SECTORES:
+        print("Error: Sector no válido.")
+        return
+
+    try:
+        cantidad = int(input("Ingrese cantidad de entradas: "))
+        ventas = obtener_ventas_actuales()
+        if ventas[sector] + cantidad > SECTORES[sector]['capacidad_max']:
+            print("Error: Capacidad excedida.")
+            return
+
+        total = calcular_descuento(SECTORES[sector]['precio'] * cantidad, cantidad)
+        with open(ARCHIVO_VENTAS, 'a') as f:
+            f.write(f"{sector},{cantidad},{total:.2f}\n")
+        print(f"Venta exitosa. Total: ${total:.2f}")
+    except ValueError:
+        print("Error: Ingrese un valor numérico.")
+
+def ver_estadisticas():
+    """Calcula y muestra estadísticas finales."""
+    ventas = obtener_ventas_actuales()
+    recaudacion = 0
+    if os.path.exists(ARCHIVO_VENTAS):
+        with open(ARCHIVO_VENTAS, 'r') as f:
+            for linea in f:
+                recaudacion += float(linea.strip().split(',')[2])
+
+    print("\n--- Estadísticas de Ventas ---")
+    for s, c in ventas.items():
+        print(f"Sector {s}: {c} vendidas")
+    print(f"Recaudación total: ${recaudacion:.2f}")
+    if sum(ventas.values()) > 0:
+        print(f"Sector más demandado: {max(ventas, key=ventas.get)}")
+
+def main():
+    while True:
+        print("\n--- SISTEMA DE GESTIÓN DE RECITALES ---")
+        print("1. Registrar venta | 2. Ver estadísticas | 3. Salir")
+        opcion = input("Seleccione: ")
+        if opcion == '1': registrar_venta()
+        elif opcion == '2': ver_estadisticas()
+        elif opcion == '3': break
+
+if __name__ == "__main__":
+    main()
