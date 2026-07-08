@@ -1,0 +1,51 @@
+import os
+
+# --- CONFIGURACIÓN ---
+ARCHIVO_VENTAS = "ventas.txt"
+SECTORES = {
+    'A': {'precio': 5000},
+    'B': {'precio': 3000},
+    'C': {'precio': 1500}
+}
+
+# --- FUNCIONES ---
+
+def registrar_venta():
+    """Registra una venta básica en el archivo txt."""
+    print("\n--- Registro de Venta ---")
+    sector = input("Ingrese sector (A/B/C): ").upper()
+    
+    if sector not in SECTORES:
+        print("Error: Sector no válido.")
+        return
+
+    try:
+        cantidad = int(input("Ingrese cantidad de entradas: "))
+        total = SECTORES[sector]['precio'] * cantidad
+        
+        # Módulo 4: Guardado persistente básico
+        with open(ARCHIVO_VENTAS, 'a') as f:
+            f.write(f"{sector},{cantidad},{total}\n")
+            
+        print(f"Venta registrada. Total: ${total}")
+    except ValueError:
+        print("Error: Ingrese un valor numérico.")
+
+def ver_estadisticas():
+    print("\n--- Estadísticas de Ventas ---")
+    print("Función en desarrollo...")
+
+def main():
+    """Menú principal."""
+    while True:
+        print("\n--- SISTEMA DE GESTIÓN DE RECITALES ---")
+        print("1. Registrar venta | 2. Ver estadísticas | 3. Salir")
+        opcion = input("Seleccione: ")
+        
+        if opcion == '1': registrar_venta()
+        elif opcion == '2': ver_estadisticas()
+        elif opcion == '3': break
+        else: print("Opción inválida.")
+
+if __name__ == "__main__":
+    main()
