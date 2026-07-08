@@ -1,0 +1,59 @@
+import os
+
+# --- CONFIGURACIÓN ---
+ARCHIVO_VENTAS = "ventas.txt"
+SECTORES = {
+    'A': {'precio': 5000, 'capacidad_max': 10},
+    'B': {'precio': 3000, 'capacidad_max': 20},
+    'C': {'precio': 1500, 'capacidad_max': 30}
+}
+
+# --- FUNCIONES ---
+
+def calcular_descuento(total, cantidad):
+    """Lógica de promoción: 10% si se compran más de 5 entradas."""
+    if cantidad > 5:
+        return total * 0.90
+    return total
+
+def registrar_venta():
+    """Registra venta con validación de capacidad y descuentos."""
+    print("\n--- Registro de Venta ---")
+    sector = input("Ingrese sector (A/B/C): ").upper()
+    
+    if sector not in SECTORES:
+        print("Error: Sector no válido.")
+        return
+
+    try:
+        cantidad = int(input("Ingrese cantidad de entradas: "))
+        
+        # Lógica de capacidad (Simulada por ahora)
+        if cantidad > SECTORES[sector]['capacidad_max']:
+            print("Error: Cantidad excede capacidad total.")
+            return
+
+        subtotal = SECTORES[sector]['precio'] * cantidad
+        total_final = calcular_descuento(subtotal, cantidad)
+        
+        with open(ARCHIVO_VENTAS, 'a') as f:
+            f.write(f"{sector},{cantidad},{total_final}\n")
+        print(f"Venta confirmada. Total: ${total_final}")
+    except ValueError:
+        print("Error: Ingrese un valor numérico.")
+
+def ver_estadisticas():
+    print("\n--- Estadísticas de Ventas ---")
+    print("Función en desarrollo...")
+
+def main():
+    while True:
+        print("\n--- SISTEMA DE GESTIÓN DE RECITALES ---")
+        print("1. Registrar venta | 2. Ver estadísticas | 3. Salir")
+        opcion = input("Seleccione: ")
+        if opcion == '1': registrar_venta()
+        elif opcion == '2': ver_estadisticas()
+        elif opcion == '3': break
+
+if __name__ == "__main__":
+    main()
